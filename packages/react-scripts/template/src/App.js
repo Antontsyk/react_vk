@@ -73,7 +73,7 @@ var Contact = React.createClass({
 	
 	render: function(){
 		return (
-			<div className="col-sm-6 col-md-4">
+			<div className="col-sm-6 col-md-3">
 				<div className="thumbnail">
 					<img src={this.props.image} alt="100%x200" style={style.img} />
 					<div className="caption">
