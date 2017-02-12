@@ -55,11 +55,12 @@ var CONTACTS = [
 	}
 ];
 
-var Friends = [];
+//var Friends = [];
 
 const style = {
 	img: {
-			height:"200px",
+			height:"100%",
+			width:"100%",
 			margin: "10px auto",
 			display: "block"
 		},
@@ -73,13 +74,13 @@ var Contact = React.createClass({
 	
 	render: function(){
 		return (
-			<div className="col-sm-6 col-md-3">
+			<div className="col-sm-4 col-md-2">
 				<div className="thumbnail">
 					<img src={this.props.image} alt="100%x200" style={style.img} />
 					<div className="caption">
 						<h3>{this.props.name}</h3>
 						<p>{this.props.phone}</p>
-						<p><a href="#" className="btn btn-primary" role="button">Button</a> 
+						<p><a href={"https://vk.com/id"+(this.props.urlid)} className="btn btn-primary" role="button">Button</a>
 						<a href="#" className="btn btn-default" role="button">Button</a></p>
 					</div>					
 				</div>
@@ -88,14 +89,35 @@ var Contact = React.createClass({
 	}
 })
 var ContactList = React.createClass({
+    Friends: [],
+	Arrf: function () {
+    	var th = this;
+        $.ajax({
+            url: 'https://api.vk.com/api.php?oauth=1&method=users.getFollowers&uid=41198370&count=30&fields=photo', // вместо 65762432 указываем свой ID
+            dataType: "jsonp",
+            cache: false,
+            success: function(e) {
+                th.setState({
+                	friends: e.response.items,
+                    displayedContacts : e.response.items
+                });
+            }.bind(this),
+            error: function() {
+                console.log('error');
+            }.bind(this)
+    	});
+    },
 	getInitialState: function(){
+        this.Arrf();
 		return {
-			displayedContacts: Friends
+			friends: [],
+			displayedContacts: []
 		};	
 	},
 	handleSearch: function(event){
+		console.log(this.state.friends);
 		var searchQuery = event.target.value.toLowerCase();
-		var displayedContacts = Friends.filter(function(el){
+		var displayedContacts = this.state.friends.filter(function(el){
 			var searchName = el.first_name.toLowerCase();
 			var searchPhone = el.last_name.toLowerCase();
 			
@@ -105,11 +127,11 @@ var ContactList = React.createClass({
 			displayedContacts: displayedContacts
 		});
 	},
-	componentDidMount: function() {
+	/*componentDidMount: function() {
     // Is there a React-y way to avoid rebinding `this`? fat arrow?
     var th = this;
     this.serverRequest = $.ajax({  
-            url: 'http://api.vk.com/method/users.getFollowers?uid=26905714&count=50&fields=photo', // вместо 65762432 указываем свой ID 
+            url: 'https://api.vk.com/api.php?oauth=1&method=users.getFollowers&uid=41198370&count=30&fields=photo', // вместо 65762432 указываем свой ID
             dataType: "jsonp",
 			cache: false
         }).done(function(e){th.setState({
@@ -119,7 +141,7 @@ var ContactList = React.createClass({
   	},
 	componentWillUnmount: function() {
 		this.serverRequest.abort();
-	},
+	},*/
   
 	render: function(){
 		return (
@@ -133,7 +155,8 @@ var ContactList = React.createClass({
 					{
 						this.state.displayedContacts.map(function(el){
 							return <Contact 
-								key={el.uid} 
+								key={el.uid}
+								urlid={el.uid}
 								name={el.first_name} 
 								phone={el.last_name} 
 								image={el.photo} 
