@@ -109,10 +109,11 @@ var ContactList = React.createClass({
     // Is there a React-y way to avoid rebinding `this`? fat arrow?
     var th = this;
     this.serverRequest = $.ajax({  
-            url: 'http://api.vk.com/method/users.getFollowers?uid=26905714&count=50&fields=photo', // вместо 65762432 указываем свой ID 
+            url: 'http://api.vk.com/method/users.getFollowers?uid=26905714&count=500&fields=photo', // вместо 65762432 указываем свой ID
             dataType: "jsonp",
 			cache: false
-        }).done(function(e){th.setState({
+        }).done(function(e){
+		th.setState({
             	displayedContacts: e.response.items
           	});
 	});    
